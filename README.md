@@ -160,24 +160,33 @@ listen web_tcp
 
 ### Задание 4
 
-`Приведите ответ в свободной форме........`
-
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
-
 ```
-Поле для вставки кода...
-....
-....
-....
-....
+frontend example
+        mode http
+        bind :8088
+        #default_backend web_servers
+        acl ACL_example1.com hdr(host) -i example1.local
+        use_backend web_servers1 if ACL_example1.com
+        acl ACL_example2.com hdr(host) -i example2.local
+        use_backend web_servers2 if ACL_example2.com
+
+backend web_servers1
+        mode http
+        balance roundrobin
+        option httpchk
+        http-check send meth GET uri /index.html
+        server s1 127.0.0.1:8888 weight 2 check
+        server s2 127.0.0.1:9999 weight 3 check
+
+
+backend web_servers2
+        mode http
+        balance roundrobin
+        option httpchk
+        http-check send meth GET uri /index.html
+        server s1 127.0.0.1:6666 weight 2 check
+        server s2 127.0.0.1:7777 weight 3 check
 ```
 
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота](ссылка на скриншот)`
-
+![image](https://github.com/duha2060/HaProxy/assets/80347708/568409a1-5bf5-42d1-a82f-495e3f1e9d74)
 
