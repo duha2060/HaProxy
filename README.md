@@ -25,7 +25,7 @@
 ### Задание 1
 
 ```
-listen stats
+listen stats 
         bind                    :888
         mode                    http
         stats                   enable
@@ -33,8 +33,12 @@ listen stats
         stats refresh           5s
         stats realm             Haproxy\ Statistics
 
+frontend example 
+        mode http
+        bind :8088
+        default_backend web_servers
 
-backend web_servers
+backend web_servers  
         mode http
         balance roundrobin
         option httpchk
@@ -45,10 +49,10 @@ backend web_servers
 
 listen web_tcp
 
-        bind :1325
+	bind :1325
 
-        server s1 127.0.0.1:8888 check inter 3s
-        server s2 127.0.0.1:9999 check inter 3s
+	server s1 127.0.0.1:8888 check inter 3s
+	server s2 127.0.0.1:9999 check inter 3s
 ```
 
 ---
