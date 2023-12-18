@@ -55,43 +55,106 @@ listen web_tcp
 	server s2 127.0.0.1:9999 check inter 3s
 ```
 
+
+![image](https://github.com/duha2060/HaProxy/assets/80347708/eda07fbd-c016-4639-be2b-b05aa7eb9a6d)
+
 ---
 
 ### Задание 2
-
-`Приведите ответ в свободной форме........`
-
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
-
 ```
-Поле для вставки кода...
-....
-....
-....
-....
+listen stats
+# веб-страница со статистикой
+        bind                    :888
+        mode                    http
+        stats                   enable
+        stats uri               /stats
+        stats refresh           5s
+        stats realm             Haproxy\ Statistics
+
+frontend example
+# секция фронтенд
+        mode http
+        bind :8088
+        #default_backend web_servers
+        acl ACL_example.local hdr(host) -i example.local
+        use_backend web_servers if ACL_example.local
+        #default_backend web_servers
+
+backend web_servers
+# секция бэкенд
+        mode http
+        balance roundrobin
+        option httpchk
+        http-check send meth GET uri /index.html
+        server s1 127.0.0.1:8888 weight 2 check
+        server s2 127.0.0.1:9999 weight 3 check
+        server s3 127.0.0.1:6666 weight 4 check
 ```
 
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота 2](ссылка на скриншот 2)`
+![image](https://github.com/duha2060/HaProxy/assets/80347708/de19126a-7fc1-4127-ad78-31bc827b1bef)
 
-
----
 
 ### Задание 3
 
-`Приведите ответ в свободной форме........`
+![image](https://github.com/duha2060/HaProxy/assets/80347708/59cbc444-637f-4575-ae53-fc06f74f3155)
+![image](https://github.com/duha2060/HaProxy/assets/80347708/99f8e2c2-17da-44a9-b91a-318667b6e8c0)
+```
+include /etc/nginx/include/upstream.inc;
 
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
+server {
+   listen       80;
+
+   server_name  example.local;
+
+
+   access_log   /var/log/nginx/example-http.com-acess.log;
+   error_log    /var/log/nginx/example-http.com-error.log;
+
+   location / {
+                proxy_pass      http://localhost:1325;
+
+   }
+   location ~* \.(jpg|jpeg)$ {
+                root /var/www/html;
+   }
+}
+```
+```
+listen stats
+# веб-страница со статистикой
+        bind                    :888
+        mode                    http
+        stats                   enable
+        stats uri               /stats
+        stats refresh           5s
+        stats realm             Haproxy\ Statistics
+
+frontend example
+        mode http
+        bind :8088
+        #default_backend web_servers
+        acl ACL_example.local hdr(host) -i example.local
+        use_backend web_servers if ACL_example.local
+        #default_backend web_servers
+
+backend web_servers
+        mode http
+        balance roundrobin
+        option httpchk
+        http-check send meth GET uri /index.html
+        server s1 127.0.0.1:8888 weight 2 check
+        server s2 127.0.0.1:9999 weight 3 check
+        server s3 127.0.0.1:6666 weight 4 check
+
+listen web_tcp
+
+        bind :1325
+
+        server s1 127.0.0.1:8888 check inter 3s
+        server s2 127.0.0.1:9999 check inter 3s
+        server s3 127.0.0.1:6666 check inter 3s
+```
+
 
 ```
 Поле для вставки кода...
